@@ -1,0 +1,77 @@
+---
+interface Props {
+  recipe: {
+    title: string;
+    description: string;
+    hero_image: string;
+    prep_time: string;
+    cook_time: string;
+    total_time: string;
+    servings: number;
+    ingredients: Array<{ name: string; amount: number; unit: string; notes?: string }>;
+    instructions: Array<{ step: number; name?: string; text: string; image?: string }>;
+    category: string;
+    diet?: string[];
+    nutrition?: {
+      calories?: string;
+      carbohydrates?: string;
+      protein?: string;
+      fat?: string;
+      fiber?: string;
+    };
+    author: string;
+    published_date: string;
+    updated_date?: string;
+  };
+  canonicalUrl: string;
+}
+
+const { recipe, canonicalUrl } = Astro.props;
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://engineeredfood.com';
+const imageUrl = recipe.hero_image.startsWith('http')
+  ? recipe.hero_image
+  : `${siteUrl}${recipe.hero_image.startsWith('/') ? '' : '/'}${recipe.hero_image}`;
+
+const schemaData = {
+  "@context": "https://schema.org",
+  "@type": "Recipe",
+  "name": recipe.title,
+  "description": recipe.description,
+  "image": [imageUrl],
+  "author": {
+    "@type": "Person",
+    "name": recipe.author
+  },
+  "datePublished": recipe.published_date,
+  ...(recipe.updated_date && { "dateModified": recipe.updated_date }),
+  "prepTime": recipe.prep_time,
+  "cookTime": recipe.cook_time,
+  "totalTime": recipe.total_time,
+  "recipeYield": `${recipe.servings} servings`,
+  "recipeCategory": recipe.category,
+  ...(recipe.diet && recipe.diet.length > 0 && { "suitableForDiet": recipe.diet.map(d => `https://schema.org/${d}`) }),
+  "recipeIngredient": recipe.ingredients.map(
+    (ing) => `${ing.amount} ${ing.unit} ${ing.name}${ing.notes ? ` (${ing.notes})` : ''}`
+  ),
+  "recipeInstructions": recipe.instructions.map((inst) => ({
+    "@type": "HowToStep",
+    "position": inst.step,
+    "name": inst.name || `Step ${inst.step}`,
+    "text": inst.text,
+    ...(inst.image && { "image": inst.image.startsWith('http') ? inst.image : `${siteUrl}${inst.image}` })
+  })),
+  ...(recipe.nutrition && {
+    "nutrition": {
+      "@type": "NutritionInformation",
+      ...(recipe.nutrition.calories && { "calories": recipe.nutrition.calories }),
+      ...(recipe.nutrition.carbohydrates && { "carbohydrateContent": recipe.nutrition.carbohydrates }),
+      ...(recipe.nutrition.protein && { "proteinContent": recipe.nutrition.protein }),
+      ...(recipe.nutrition.fat && { "fatContent": recipe.nutrition.fat }),
+      ...(recipe.nutrition.fiber && { "fiberContent": recipe.nutrition.fiber })
+    }
+  })
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schemaData, null, 2)} />

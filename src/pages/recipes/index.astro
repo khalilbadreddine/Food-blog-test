@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const recipes = await getCollection('recipes');
+const categories = Array.from(new Set(recipes.map(r => r.data.category)));
+---
+
+<BaseLayout
+  title="All Recipes"
+  description="Explore all deconstructed recipe diagrams, 3D models, and assembly instructions."
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-10">
+      <h1 class="text-4xl font-serif font-bold text-warm-950 mb-3">Recipe Index</h1>
+      <p class="text-warm-700 font-sans max-w-2xl">
+        Filter through our systemized food blueprints by category or interaction type.
+      </p>
+
+      <div class="flex flex-wrap gap-2 mt-6">
+        <a href="/recipes" class="px-4 py-1.5 rounded-full bg-warm-900 text-warm-50 text-xs font-mono font-medium">
+          All ({recipes.length})
+        </a>
+        {categories.map(cat => (
+          <a href={`/categories/${cat.toLowerCase()}`} class="px-4 py-1.5 rounded-full bg-warm-200 text-warm-800 text-xs font-mono font-medium hover:bg-warm-300 transition-colors">
+            {cat}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {recipes.map(recipe => (
+        <div class="group rounded-2xl overflow-hidden bg-white border border-warm-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+          <a href={`/recipes/${recipe.slug}`} class="block relative aspect-[2/3] overflow-hidden bg-warm-100">
+            <img
+              src={recipe.data.hero_image}
+              alt={recipe.data.title}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            {recipe.data.model_interaction_type !== 'none' && (
+              <div class="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-blueprint-bg/90 text-blueprint-accent text-xs font-mono font-bold border border-blueprint-accent/40 shadow-lg backdrop-blur-sm flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-blueprint-glow animate-pulse"></span>
+                <span class="uppercase">{recipe.data.model_interaction_type} 3D</span>
+              </div>
+            )}
+          </a>
+
+          <div class="p-6 flex flex-col flex-grow justify-between">
+            <div>
+              <div class="flex items-center space-x-2 text-xs font-mono text-warm-600 uppercase tracking-wider mb-2">
+                <span>{recipe.data.category}</span>
+                <span>•</span>
+                <span>{recipe.data.total_time.replace('PT', '').toLowerCase()}</span>
+              </div>
+              <h2 class="text-xl font-serif font-bold text-warm-950 group-hover:text-warm-700 transition-colors mb-2">
+                <a href={`/recipes/${recipe.slug}`}>{recipe.data.title}</a>
+              </h2>
+              <p class="text-sm text-warm-700 font-sans line-clamp-3 mb-4">
+                {recipe.data.description}
+              </p>
+            </div>
+
+            <a href={`/recipes/${recipe.slug}`} class="inline-flex items-center font-mono text-xs font-bold text-warm-900 group-hover:text-warm-600 transition-colors">
+              View Blueprint & Step-by-Step →
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

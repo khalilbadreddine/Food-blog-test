@@ -1,0 +1,58 @@
+---
+import RecipeLayout from '../../layouts/RecipeLayout.astro';
+import ExplodedModel from '../../components/ExplodedModel.jsx';
+import ModelViewer from '../../components/ModelViewer.astro';
+import CrossSectionModel from '../../components/CrossSectionModel.jsx';
+import ScalingModel from '../../components/ScalingModel.jsx';
+import PlateComposer from '../../components/PlateComposer.jsx';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const recipes = await getCollection('recipes');
+  return recipes.map(recipe => ({
+    params: { slug: recipe.slug },
+    props: { recipe },
+  }));
+}
+
+const { recipe } = Astro.props;
+const { Content } = await recipe.render();
+---
+
+<RecipeLayout recipe={recipe.data}>
+  <div slot="interactive-viewer" class="my-6">
+    {recipe.data.model_interaction_type === 'exploded' && recipe.data.model_asset && (
+      <div class="rounded-2xl overflow-hidden shadow-2xl border border-blueprint-accent/40">
+        <ExplodedModel client:only="react" modelAsset={recipe.data.model_asset} title={recipe.data.title} />
+      </div>
+    )}
+
+    {recipe.data.model_interaction_type === 'cross_section' && recipe.data.model_asset && (
+      <CrossSectionModel client:only="react" modelAsset={recipe.data.model_asset} title={recipe.data.title} />
+    )}
+
+    {recipe.data.model_interaction_type === 'scaling' && recipe.data.model_asset && (
+      <ScalingModel client:only="react" modelAsset={recipe.data.model_asset} title={recipe.data.title} servings={recipe.data.servings} />
+    )}
+
+    {recipe.data.model_interaction_type === 'composer' && recipe.data.model_asset && (
+      <PlateComposer client:only="react" modelAsset={recipe.data.model_asset} title={recipe.data.title} />
+    )}
+
+    {recipe.data.model_interaction_type === 'none' && recipe.data.model_asset && (
+      <ModelViewer src={recipe.data.model_asset} alt={recipe.data.title} />
+    )}
+
+    {recipe.data.model_interaction_type === 'none' && !recipe.data.model_asset && (
+      <div class="relative aspect-[2/3] max-w-xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-warm-200">
+        <img
+          src={recipe.data.hero_image}
+          alt={recipe.data.title}
+          class="w-full h-full object-cover"
+        />
+      </div>
+    )}
+  </div>
+
+  <Content />
+</RecipeLayout>
