@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+---
+
+<BaseLayout
+  title="Blog & Technique Explainers"
+  description="Deep dives into food architecture, diagrammatic cooking, and culinary system design."
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-12 border-b border-warm-200 pb-8">
+      <h1 class="text-4xl font-serif font-bold text-warm-950 mb-3">Technique & Food Systems Blog</h1>
+      <p class="text-warm-700 font-sans text-lg max-w-2xl">
+        Articles explaining the science, structural principles, and visual diagrams behind Engineered Food.
+      </p>
+    </div>
+
+    <div class="space-y-12">
+      {posts.map(post => (
+        <article class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center border-b border-warm-200/60 pb-12">
+          <a href={`/blog/${post.slug}`} class="md:col-span-5 relative aspect-[16/10] rounded-xl overflow-hidden bg-warm-100 border border-warm-200 block">
+            <img src={post.data.hero_image} alt={post.data.title} class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+          </a>
+
+          <div class="md:col-span-7">
+            <div class="flex items-center space-x-3 text-xs font-mono text-warm-600 uppercase tracking-wider mb-2">
+              <span>{post.data.category}</span>
+              <span>•</span>
+              <span>{post.data.published_date}</span>
+            </div>
+            <h2 class="text-2xl font-serif font-bold text-warm-950 hover:text-warm-700 transition-colors mb-3">
+              <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+            </h2>
+            <p class="text-warm-700 font-sans leading-relaxed mb-4 line-clamp-3">
+              {post.data.description}
+            </p>
+            <a href={`/blog/${post.slug}`} class="inline-flex items-center font-mono text-xs font-bold text-warm-900 hover:text-warm-600 transition-colors">
+              Read Article →
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

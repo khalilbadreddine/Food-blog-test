@@ -1,0 +1,32 @@
+engineeredfood.com, www.engineeredfood.com {
+    # Reverse proxy to local Astro Node/preview server or static dist folder
+    root * /var/www/engineered-food/dist
+    file_server
+
+    # Fallback to index.html for static routes or serve static files
+    try_files {path} {path}/ /index.html
+
+    # Compression
+    encode gzip zstd
+
+    # Cloudflare & Pinterest caching header optimizations
+    header {
+        # Enable HTTP Strict Transport Security (HSTS)
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+        # Prevent MIME type sniffing
+        X-Content-Type-Options "nosniff"
+
+        # Referrer Policy for analytics tracking
+        Referrer-Policy "strict-origin-when-cross-origin"
+
+        # Cache static GLB models and images aggressively
+        @static path *.glb *.jpg *.png *.webp *.svg *.css *.js
+        header @static Cache-Control "public, max-age=31536000, immutable"
+    }
+
+    # Logging
+    log {
+        output file /var/log/caddy/engineered_food_access.log
+    }
+}

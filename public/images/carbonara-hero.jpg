@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1500" viewBox="0 0 1000 1500">
+  <rect width="1000" height="1500" fill="#78350f"/>
+  <circle cx="500" cy="750" r="320" fill="#fef08a" stroke="#f59e0b" stroke-width="8"/>
+  <text x="500" y="730" font-family="serif" font-size="48" font-weight="bold" fill="#451a03" text-anchor="middle">ROMAN CARBONARA</text>
+  <text x="500" y="790" font-family="monospace" font-size="24" fill="#92400e" text-anchor="middle">EMULSIFIED EGG & GUANCIALE</text>
+</svg>

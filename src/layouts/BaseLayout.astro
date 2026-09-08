@@ -1,0 +1,122 @@
+---
+import MetaTags from '../components/MetaTags.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  publishedTime?: string;
+}
+
+const { title, description, image, publishedTime } = Astro.props;
+
+const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
+const umamiScriptUrl = import.meta.env.PUBLIC_UMAMI_SCRIPT_URL || 'https://analytics.example.com/script.js';
+const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN;
+const pinterestTagId = import.meta.env.PUBLIC_PINTEREST_TAG_ID;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="h-full scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <MetaTags title={title} description={description} image={image} publishedTime={publishedTime} />
+
+    {umamiWebsiteId && (
+      <script async src={umamiScriptUrl} data-website-id={umamiWebsiteId}></script>
+    )}
+    {plausibleDomain && (
+      <script defer data-domain={plausibleDomain} src="https://plausible.io/js/script.js"></script>
+    )}
+
+    {pinterestTagId && (
+      <script type="text/javascript" set:html={`
+        !function(e){if(!window.pintrk){window.pintrk = function () {
+        window.pintrk.queue.push(Array.prototype.slice.call(arguments))};var
+          n=window.pintrk;n.queue=[],n.version="3.0";var
+          t=document.createElement("script");t.async=!0,t.src=e;var
+          r=document.getElementsByTagName("script")[0];
+          r.parentNode.insertBefore(t,r)}}("https://s.pinimg.com/ct/core.js");
+        pintrk('load', '${pinterestTagId}');
+        pintrk('page');
+      `} />
+    )}
+  </head>
+  <body class="flex flex-col min-h-screen bg-warm-50 text-warm-950">
+    <header class="sticky top-0 z-40 bg-warm-50/90 backdrop-blur-md border-b border-warm-200/60 transition-all">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <a href="/" class="group flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-lg bg-warm-900 flex items-center justify-center text-warm-50 font-mono font-bold text-lg border border-warm-700 shadow-sm group-hover:bg-warm-800 transition-colors">
+            EF
+          </div>
+          <div>
+            <span class="text-xl font-serif font-bold text-warm-950 block tracking-tight">Engineered Food</span>
+            <span class="text-xs font-mono text-warm-600 uppercase tracking-widest block -mt-1">Recipes, Deconstructed</span>
+          </div>
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+          <a href="/recipes" class="text-warm-800 hover:text-warm-950 transition-colors">All Recipes</a>
+          <a href="/categories/mains" class="text-warm-800 hover:text-warm-950 transition-colors">Mains</a>
+          <a href="/categories/bakes" class="text-warm-800 hover:text-warm-950 transition-colors">Bakes & Layers</a>
+          <a href="/blog" class="text-warm-800 hover:text-warm-950 transition-colors">Articles</a>
+          <a href="/about" class="text-warm-800 hover:text-warm-950 transition-colors">About</a>
+        </nav>
+
+        <div class="flex items-center space-x-4">
+          <a href="/recipes" class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-warm-900 text-warm-50 text-sm font-medium hover:bg-warm-800 transition-colors shadow-sm">
+            Explore 3D Recipes
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow">
+      <slot />
+    </main>
+
+    <footer class="bg-warm-950 text-warm-200 border-t border-warm-800 mt-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div class="md:col-span-2">
+            <div class="flex items-center space-x-3 mb-4">
+              <div class="w-8 h-8 rounded bg-blueprint-accent flex items-center justify-center text-warm-950 font-mono font-bold text-sm">
+                EF
+              </div>
+              <span class="text-lg font-serif font-bold text-warm-50">Engineered Food</span>
+            </div>
+            <p class="text-warm-300 text-sm max-w-md leading-relaxed">
+              Treating dishes like systems to be diagrammed, not just photographed. Built for home cooks, food engineers, and curious minds.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="text-xs font-mono uppercase tracking-wider text-blueprint-accent mb-4">Navigation</h4>
+            <ul class="space-y-2 text-sm text-warm-300">
+              <li><a href="/recipes" class="hover:text-warm-100 transition-colors">Recipe Index</a></li>
+              <li><a href="/blog" class="hover:text-warm-100 transition-colors">Technique Blog</a></li>
+              <li><a href="/about" class="hover:text-warm-100 transition-colors">About the Project</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-xs font-mono uppercase tracking-wider text-blueprint-accent mb-4">Pinterest & RSS</h4>
+            <p class="text-xs text-warm-400 leading-relaxed mb-3">
+              Explore vertical diagrams, short looping animations, and recipe rich pin cards.
+            </p>
+            <div class="text-xs font-mono text-warm-400">
+              © {new Date().getFullYear()} Engineered Food. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

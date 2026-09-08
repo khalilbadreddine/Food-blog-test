@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-warm-50 text-warm-950 antialiased font-sans selection:bg-warm-200 selection:text-warm-900;
+  }
+}
+
+.blueprint-panel {
+  background-color: #0a192f;
+  background-image:
+    radial-gradient(rgba(56, 189, 248, 0.15) 1px, transparent 1px),
+    linear-gradient(to right, rgba(56, 189, 248, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.08) 1px, transparent 1px);
+  background-size: 20px 20px, 20px 20px, 20px 20px;
+  background-position: -1px -1px;
+}
